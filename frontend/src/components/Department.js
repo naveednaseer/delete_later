@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { variables } from '../variables.js'
 
 const Department = () => {
 
 
     let [department, setDepartment] = useState([])
+    let [filteredDepartment, setFilteredDepartment] = useState([])
+    
     let [values, setValues] = useState({
         modalTitle: '',
         departmentName: '',
@@ -17,7 +19,6 @@ const Department = () => {
 
     useEffect (() => {
         getDepartments()
-        filterFn()
     }, [])
 
 
@@ -25,9 +26,8 @@ const Department = () => {
         let departmentIdFilter = values.departmentIdFilter
         let departmentNameFilter = values.departmentNameFilter
 
-        values.departmentsWithoutFilter = [...department]
 
-        let filteredData = values.departmentsWithoutFilter.filter(
+        let filteredData = filteredDepartment.filter(
             function(el){
                 return el.DepartmentId.toString().toLowerCase().includes(
                     departmentIdFilter.toString().trim().toLowerCase()
@@ -52,7 +52,6 @@ const Department = () => {
     let changeDepartmentNameFilter = (e) => {
         console.log(e.target.value)
         setValues({...values, 'departmentNameFilter': e.target.value})
-        console.log(values)
         filterFn()
     }
 
@@ -62,6 +61,7 @@ const Department = () => {
         let data = await response.json()
 
         setDepartment(data)
+        setFilteredDepartment(data)
     }
 
 
@@ -142,6 +142,8 @@ const Department = () => {
             })
     }
     }
+
+    
 
 
     return (
