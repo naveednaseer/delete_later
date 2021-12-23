@@ -47,7 +47,17 @@ const Department = () => {
     let sortResult = (prop, asc) => {
         console.log(prop)
         console.log(asc)
-        let sortedData = [...lateData].sort(function(a, b) {
+        let sortedData = [...lateData](function(a, b) {
+
+            //                            !!!!!!!!!!REMEMBER!!!!!!!!!!!
+            //                            !!!!!!!!!!REMEMBER!!!!!!!!!!!
+            //                            !!!!!!!!!!REMEMBER!!!!!!!!!!!
+            //                            !!!!!!!!!!REMEMBER!!!!!!!!!!!
+            // let sortedData = lateData.sort(function(a, b) {  
+            // [...lateData] using spread we make a copy of state before (lateData.sort) we were trying to mutate the state
+            // React state should be treated as immutable !Important
+            // alos remember how we learned to refrence stuff in filterFn (how we brought  (newValues) and used (let filteredData =) so that onChange triggers on first change)
+
             if(asc){
                 return (a[prop]>b[prop])?1:((a[prop]<b[prop])?-1:0);
             }
