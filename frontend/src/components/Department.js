@@ -6,6 +6,7 @@ const Department = () => {
 
     let [department, setDepartment] = useState([])
     let [filteredDepartment, setFilteredDepartment] = useState([])
+    let [lateData, setLateData] = useState([])
     
     let [values, setValues] = useState({
         modalTitle: '',
@@ -22,9 +23,9 @@ const Department = () => {
     }, [])
 
 
-    let filterFn = () =>{
-        let departmentIdFilter = values.departmentIdFilter
-        let departmentNameFilter = values.departmentNameFilter
+    let filterFn = (newValues) =>{
+        let departmentIdFilter = newValues.departmentIdFilter
+        let departmentNameFilter = newValues.departmentNameFilter
 
 
         let filteredData = filteredDepartment.filter(
@@ -43,18 +44,38 @@ const Department = () => {
     }
 
 
-    let changeDepartmentIdFilter = (e) => {
-        setValues({...values, 'departmentIdFilter': e.target.value})
-        filterFn()
-    }
-    
-    
-    let changeDepartmentNameFilter = (e) => {
-        console.log(e.target.value)
-        setValues({...values, 'departmentNameFilter': e.target.value})
-        filterFn()
+    let sortResult = (prop, asc) => {
+        console.log(prop)
+        console.log(asc)
+        const sortedData = lateData.sort(function(a, b) {
+            if(asc){
+                return (a[prop]>b[prop]) ? 1 : ((a[prop] < b[prop]) ? - 1 : 0)
+            }
+            else{
+                return (b[prop]>a[prop]) ? 1 : ((b[prop] < a[prop]) ? - 1 : 0)
+            }
+        })
+        setDepartment(sortedData)
     }
 
+
+
+
+    let changeDepartmentIdFilter = (e) => {
+        const newValues = {...values, 'departmentIdFilter': e.target.value}
+        setValues(newValues)
+        filterFn(newValues)
+    }
+
+    
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>here lies the fix for onChange not getting triggered on first change<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    let changeDepartmentNameFilter = (e) => {
+        const newValues = {...values, 'departmentNameFilter': e.target.value}
+        setValues(newValues)
+        filterFn(newValues)
+    }
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>here lies the fix for onChange not getting triggered on first change<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
 
     let getDepartments = async () => {
         let response = await fetch (variables.API_URL + "department")
@@ -62,7 +83,9 @@ const Department = () => {
 
         setDepartment(data)
         setFilteredDepartment(data)
+        setLateData(data)
     }
+    
 
 
     let changeDepartmentName = (e) => {
@@ -155,11 +178,40 @@ const Department = () => {
                 <thead>
                     <tr>
                         <th>
-                            <input className="form-control m-2" onChange={(e) => {changeDepartmentIdFilter(e)}} placeholder='Filter' />
+                            <div className="d-flex flex-row">
+
+                                <input className="form-control m-2" onChange={(e) => {changeDepartmentIdFilter(e)}} placeholder='Filter' />
+                                <button type="button" className="btn btn-light" onClick={(() =>sortResult(values.departmentId, true))}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z"/>
+                                    </svg>
+                                </button>
+                                <button type="button" className="btn btn-light" onClick={() => sortResult(values.departmentId, false)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z"/>
+                                    </svg>
+                                </button>
+
+                            </div>
                             DepartmentId
                         </th>
+                        
                         <th>
-                            <input className="form-control m-2" onChange={(e) => {changeDepartmentNameFilter(e)}} placeholder='Filter' />
+                            <div className="d-flex flex-row">
+
+                                <input className="form-control m-2" onChange={(e) => {changeDepartmentNameFilter(e)}} placeholder='Filter' />
+                                <button type="button" className="btn btn-light" onClick={() => sortResult(values.departmentName, true)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z"/>
+                                    </svg>
+                                </button>
+                                <button type="button" className="btn btn-light" onClick={() => sortResult(values.departmentName, false)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z"/>
+                                    </svg>
+                                </button>
+
+                            </div>
                             DepartmentName
                         </th>
                         <th>
